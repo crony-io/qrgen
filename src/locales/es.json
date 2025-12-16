@@ -1,7 +1,12 @@
 {
   "app": {
     "title": "Generador de Códigos QR",
-    "description": "Genera códigos QR para varios tipos de datos"
+    "description": "Genera códigos QR para varios tipos de datos",
+    "welcome": {
+      "badge": "Bienvenido",
+      "title": "Crea códigos QR en segundos",
+      "description": "Elige un tipo, personaliza el estilo y luego descarga o copia tu código QR."
+    }
   },
   "common": {
     "generate": "Generar",
@@ -198,5 +203,11 @@
     "home": "Inicio",
     "history": "Historial",
     "settings": "Configuración"
+  },
+  "footer": {
+    "github": {
+      "label": "GitHub",
+      "aria_label": "Abrir repositorio de GitHub"
+    }
   }
 }

@@ -1,7 +1,12 @@
 {
   "app": {
     "title": "QR Code Generator",
-    "description": "Generate QR codes for various types of data"
+    "description": "Generate QR codes for various types of data",
+    "welcome": {
+      "badge": "Welcome",
+      "title": "Create QR codes in seconds",
+      "description": "Choose a type, customize the style, then download or copy your QR code."
+    }
   },
   "common": {
     "generate": "Generate",
@@ -198,5 +203,11 @@
     "home": "Home",
     "history": "History",
     "settings": "Settings"
+  },
+  "footer": {
+    "github": {
+      "label": "GitHub",
+      "aria_label": "Open GitHub repository"
+    }
   }
 }

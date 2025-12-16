@@ -1,7 +1,7 @@
 <template>
-  <div class="flex flex-col lg:flex-row lg:gap-6">
+  <div class="flex flex-col lg:flex-row gap-6">
     <!-- Left Column: Data Input -->
-    <div class="space-y-6 w-2/3">
+    <div class="space-y-6 w-full lg:w-2/3">
       <!-- Type Selector -->
       <QRTypeSelector v-model="selectedType" @select="handleTypeChange" />
 
@@ -37,7 +37,7 @@
     </div>
 
     <!-- Right Column: Preview -->
-    <div class="space-y-6 w-1/3 lg:sticky lg:top-6 lg:self-start">
+    <div class="space-y-6 w-full lg:w-1/3 lg:sticky lg:top-6 lg:self-start">
       <!-- Preview Section -->
       <div class="panel">
         <h3 class="mb-4 text-lg font-semibold text-body">

@@ -127,46 +127,20 @@
 
       <div class="grid grid-cols-2 gap-4">
         <!-- Foreground Color -->
-        <div>
-          <label class="form-label" for="qr-fg-color">{{ t('qr.options.foreground') }}</label>
-          <div class="flex items-center gap-2">
-            <input
-              id="qr-fg-color"
-              type="color"
-              :value="options.colors.foreground"
-              class="h-10 min-w-10 cursor-pointer rounded border border-border"
-              @input="updateForegroundColor(($event.target as HTMLInputElement).value)"
-            />
-            <input
-              type="text"
-              :value="options.colors.foreground"
-              class="form-control-inline flex-1 uppercase w-full"
-              maxlength="7"
-              @input="updateForegroundColor(($event.target as HTMLInputElement).value)"
-            />
-          </div>
-        </div>
+        <ColorSelector
+          id="qr-fg-color"
+          :label="t('qr.options.foreground')"
+          :model-value="options.colors.foreground"
+          @update:model-value="updateForegroundColor"
+        />
 
         <!-- Background Color -->
-        <div>
-          <label class="form-label" for="qr-bg-color">{{ t('qr.options.background') }}</label>
-          <div class="flex items-center gap-2">
-            <input
-              id="qr-bg-color"
-              type="color"
-              :value="options.colors.background"
-              class="h-10 min-w-10 cursor-pointer rounded border border-border"
-              @input="updateBackgroundColor(($event.target as HTMLInputElement).value)"
-            />
-            <input
-              type="text"
-              :value="options.colors.background"
-              class="form-control-inline flex-1 uppercase w-full"
-              maxlength="7"
-              @input="updateBackgroundColor(($event.target as HTMLInputElement).value)"
-            />
-          </div>
-        </div>
+        <ColorSelector
+          id="qr-bg-color"
+          :label="t('qr.options.background')"
+          :model-value="options.colors.background"
+          @update:model-value="updateBackgroundColor"
+        />
       </div>
 
       <div class="flex items-center gap-2">
@@ -186,7 +160,10 @@
         {{ t('qr.options.transparent_background_note') }}
       </p>
 
-      <p v-if="showContrastWarning" class="text-xs text-error">
+      <p
+        v-if="showContrastWarning"
+        class="text-lg text-error border-2 border-dashed border-red-500 p-2"
+      >
         {{ t('qr.options.contrast_warning', { ratio: contrastRatioLabel }) }}
       </p>
 
@@ -400,49 +377,21 @@
             class="grid grid-cols-2 gap-4"
             v-if="options.colors.markers.perCornerEnabled == false"
           >
-            <div>
-              <label class="form-label text-xs" for="marker-border-color">{{
-                t('qr.options.marker_border_color')
-              }}</label>
-              <div class="flex items-center gap-2">
-                <input
-                  id="marker-border-color"
-                  type="color"
-                  :value="options.colors.markers.border"
-                  class="h-10 min-w-10 cursor-pointer rounded border border-border"
-                  @input="updateMarkerBorderColor(($event.target as HTMLInputElement).value)"
-                />
-                <input
-                  type="text"
-                  :value="options.colors.markers.border"
-                  class="form-control-inline flex-1 uppercase w-full"
-                  maxlength="7"
-                  @input="updateMarkerBorderColor(($event.target as HTMLInputElement).value)"
-                />
-              </div>
-            </div>
+            <ColorSelector
+              id="marker-border-color"
+              :label="t('qr.options.marker_border_color')"
+              label-class="form-label text-xs"
+              :model-value="options.colors.markers.border"
+              @update:model-value="updateMarkerBorderColor"
+            />
 
-            <div>
-              <label class="form-label text-xs" for="marker-center-color">{{
-                t('qr.options.marker_center_color')
-              }}</label>
-              <div class="flex items-center gap-2">
-                <input
-                  id="marker-center-color"
-                  type="color"
-                  :value="options.colors.markers.center"
-                  class="h-10 min-w-10 cursor-pointer rounded border border-border"
-                  @input="updateMarkerCenterColor(($event.target as HTMLInputElement).value)"
-                />
-                <input
-                  type="text"
-                  :value="options.colors.markers.center"
-                  class="form-control-inline flex-1 uppercase w-full"
-                  maxlength="7"
-                  @input="updateMarkerCenterColor(($event.target as HTMLInputElement).value)"
-                />
-              </div>
-            </div>
+            <ColorSelector
+              id="marker-center-color"
+              :label="t('qr.options.marker_center_color')"
+              label-class="form-label text-xs"
+              :model-value="options.colors.markers.center"
+              @update:model-value="updateMarkerCenterColor"
+            />
           </div>
 
           <div class="flex items-center gap-2">
@@ -465,69 +414,21 @@
             <div v-for="corner in markerCorners" :key="corner.key" class="space-y-2">
               <div class="text-xs font-medium text-body">{{ t(corner.labelKey) }}</div>
               <div class="grid grid-cols-2 gap-4">
-                <div>
-                  <label class="form-label text-xs" :for="`marker-${corner.key}-border`">{{
-                    t('qr.options.marker_border_color')
-                  }}</label>
-                  <div class="flex items-center gap-2">
-                    <input
-                      :id="`marker-${corner.key}-border`"
-                      type="color"
-                      :value="options.colors.markers.corners[corner.key].border"
-                      class="h-10 min-w-10 cursor-pointer rounded border border-border"
-                      @input="
-                        updateMarkerCornerBorder(
-                          corner.key,
-                          ($event.target as HTMLInputElement).value,
-                        )
-                      "
-                    />
-                    <input
-                      type="text"
-                      :value="options.colors.markers.corners[corner.key].border"
-                      class="form-control-inline flex-1 uppercase w-full"
-                      maxlength="7"
-                      @input="
-                        updateMarkerCornerBorder(
-                          corner.key,
-                          ($event.target as HTMLInputElement).value,
-                        )
-                      "
-                    />
-                  </div>
-                </div>
+                <ColorSelector
+                  :id="`marker-${corner.key}-border`"
+                  :label="t('qr.options.marker_border_color')"
+                  label-class="form-label text-xs"
+                  :model-value="options.colors.markers.corners[corner.key].border"
+                  @update:model-value="(value) => updateMarkerCornerBorder(corner.key, value)"
+                />
 
-                <div>
-                  <label class="form-label text-xs" :for="`marker-${corner.key}-center`">{{
-                    t('qr.options.marker_center_color')
-                  }}</label>
-                  <div class="flex items-center gap-2">
-                    <input
-                      :id="`marker-${corner.key}-center`"
-                      type="color"
-                      :value="options.colors.markers.corners[corner.key].center"
-                      class="h-10 min-w-10 cursor-pointer rounded border border-border"
-                      @input="
-                        updateMarkerCornerCenter(
-                          corner.key,
-                          ($event.target as HTMLInputElement).value,
-                        )
-                      "
-                    />
-                    <input
-                      type="text"
-                      :value="options.colors.markers.corners[corner.key].center"
-                      class="form-control-inline flex-1 uppercase w-full"
-                      maxlength="7"
-                      @input="
-                        updateMarkerCornerCenter(
-                          corner.key,
-                          ($event.target as HTMLInputElement).value,
-                        )
-                      "
-                    />
-                  </div>
-                </div>
+                <ColorSelector
+                  :id="`marker-${corner.key}-center`"
+                  :label="t('qr.options.marker_center_color')"
+                  label-class="form-label text-xs"
+                  :model-value="options.colors.markers.corners[corner.key].center"
+                  @update:model-value="(value) => updateMarkerCornerCenter(corner.key, value)"
+                />
               </div>
             </div>
           </div>
@@ -717,27 +618,14 @@
         </div>
 
         <!-- Logo Background Color -->
-        <div>
-          <label class="form-label" for="logo-bg-color">{{
-            t('qr.options.logo_background')
-          }}</label>
-          <div class="flex items-center gap-2">
-            <input
-              id="logo-bg-color"
-              type="color"
-              :value="options.logo.backgroundColor"
-              class="h-10 w-10 cursor-pointer rounded border border-border"
-              @input="updateLogoBackgroundColor(($event.target as HTMLInputElement).value)"
-            />
-            <input
-              type="text"
-              :value="options.logo.backgroundColor"
-              class="form-control-inline flex-1 uppercase"
-              maxlength="7"
-              @input="updateLogoBackgroundColor(($event.target as HTMLInputElement).value)"
-            />
-          </div>
-        </div>
+        <ColorSelector
+          id="logo-bg-color"
+          :label="t('qr.options.logo_background')"
+          picker-class="h-10 w-10 cursor-pointer rounded border border-border"
+          text-input-class="form-control-inline flex-1 uppercase"
+          :model-value="options.logo.backgroundColor"
+          @update:model-value="updateLogoBackgroundColor"
+        />
       </div>
     </section>
   </div>
@@ -747,6 +635,7 @@
 import { ref, computed, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { Upload } from 'lucide-vue-next';
+import ColorSelector from './ui/ColorSelector.vue';
 import type {
   QROptions,
   ErrorCorrectionLevel,

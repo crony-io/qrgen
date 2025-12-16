@@ -4,7 +4,7 @@ import LanguageSelector from './LanguageSelector.vue';
 import ThemeSelector from './ThemeSelector.vue';
 </script>
 <template>
-  <header class="border-b border-border bg-page">
+  <header class="border-b border-border">
     <div class="container mx-auto px-4 py-4">
       <div class="flex items-center justify-between">
         <!-- Logo/Title -->
