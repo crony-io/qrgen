@@ -234,6 +234,159 @@
           </button>
         </div>
       </div>
+
+      <div class="space-y-3 rounded-lg border border-border p-3">
+        <div class="flex items-center justify-between">
+          <span class="text-sm font-medium text-body">{{ t('qr.options.marker_colors') }}</span>
+          <div class="flex items-center gap-2">
+            <input
+              id="qr-marker-colors"
+              type="checkbox"
+              :checked="options.colors.markers.enabled"
+              class="form-checkbox"
+              @change="toggleMarkerColors(($event.target as HTMLInputElement).checked)"
+            />
+            <label for="qr-marker-colors" class="form-checkbox-label">
+              {{ t('qr.options.enable_markers') }}
+            </label>
+          </div>
+        </div>
+
+        <div v-if="options.colors.markers.enabled" class="space-y-3">
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="form-label text-xs" for="marker-border-color">{{
+                t('qr.options.marker_border_color')
+              }}</label>
+              <div class="flex items-center gap-2">
+                <input
+                  id="marker-border-color"
+                  type="color"
+                  :value="options.colors.markers.border"
+                  class="h-10 min-w-10 cursor-pointer rounded border border-border"
+                  @input="updateMarkerBorderColor(($event.target as HTMLInputElement).value)"
+                />
+                <input
+                  type="text"
+                  :value="options.colors.markers.border"
+                  class="form-control-inline flex-1 uppercase w-full"
+                  maxlength="7"
+                  @input="updateMarkerBorderColor(($event.target as HTMLInputElement).value)"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label class="form-label text-xs" for="marker-center-color">{{
+                t('qr.options.marker_center_color')
+              }}</label>
+              <div class="flex items-center gap-2">
+                <input
+                  id="marker-center-color"
+                  type="color"
+                  :value="options.colors.markers.center"
+                  class="h-10 min-w-10 cursor-pointer rounded border border-border"
+                  @input="updateMarkerCenterColor(($event.target as HTMLInputElement).value)"
+                />
+                <input
+                  type="text"
+                  :value="options.colors.markers.center"
+                  class="form-control-inline flex-1 uppercase w-full"
+                  maxlength="7"
+                  @input="updateMarkerCenterColor(($event.target as HTMLInputElement).value)"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <input
+              id="qr-marker-per-corner"
+              type="checkbox"
+              :checked="options.colors.markers.perCornerEnabled"
+              class="form-checkbox"
+              @change="toggleMarkerPerCorner(($event.target as HTMLInputElement).checked)"
+            />
+            <label for="qr-marker-per-corner" class="form-checkbox-label">
+              {{ t('qr.options.marker_per_corner') }}
+            </label>
+          </div>
+
+          <div
+            v-if="options.colors.markers.perCornerEnabled"
+            class="space-y-3 rounded-lg border border-border p-3"
+          >
+            <div v-for="corner in markerCorners" :key="corner.key" class="space-y-2">
+              <div class="text-xs font-medium text-body">{{ t(corner.labelKey) }}</div>
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <label class="form-label text-xs" :for="`marker-${corner.key}-border`">{{
+                    t('qr.options.marker_border_color')
+                  }}</label>
+                  <div class="flex items-center gap-2">
+                    <input
+                      :id="`marker-${corner.key}-border`"
+                      type="color"
+                      :value="options.colors.markers.corners[corner.key].border"
+                      class="h-10 min-w-10 cursor-pointer rounded border border-border"
+                      @input="
+                        updateMarkerCornerBorder(
+                          corner.key,
+                          ($event.target as HTMLInputElement).value,
+                        )
+                      "
+                    />
+                    <input
+                      type="text"
+                      :value="options.colors.markers.corners[corner.key].border"
+                      class="form-control-inline flex-1 uppercase w-full"
+                      maxlength="7"
+                      @input="
+                        updateMarkerCornerBorder(
+                          corner.key,
+                          ($event.target as HTMLInputElement).value,
+                        )
+                      "
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label class="form-label text-xs" :for="`marker-${corner.key}-center`">{{
+                    t('qr.options.marker_center_color')
+                  }}</label>
+                  <div class="flex items-center gap-2">
+                    <input
+                      :id="`marker-${corner.key}-center`"
+                      type="color"
+                      :value="options.colors.markers.corners[corner.key].center"
+                      class="h-10 min-w-10 cursor-pointer rounded border border-border"
+                      @input="
+                        updateMarkerCornerCenter(
+                          corner.key,
+                          ($event.target as HTMLInputElement).value,
+                        )
+                      "
+                    />
+                    <input
+                      type="text"
+                      :value="options.colors.markers.corners[corner.key].center"
+                      class="form-control-inline flex-1 uppercase w-full"
+                      maxlength="7"
+                      @input="
+                        updateMarkerCornerCenter(
+                          corner.key,
+                          ($event.target as HTMLInputElement).value,
+                        )
+                      "
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
 
     <div class="divider" />
@@ -250,11 +403,14 @@
             v-for="shape in moduleShapes"
             :key="shape.value"
             type="button"
-            class="btn-ghost px-3 py-2 text-xs"
+            class="btn-ghost gap-2 px-3 py-2 text-xs"
             :class="{ 'ring-2 ring-accent': options.style.moduleShape === shape.value }"
             @click="updateModuleShape(shape.value)"
           >
-            {{ shape.label }}
+            <span class="inline-flex h-5 w-5 shrink-0 items-center justify-center">
+              <span :class="shape.iconClass" />
+            </span>
+            <span>{{ t(shape.labelKey) }}</span>
           </button>
         </div>
       </div>
@@ -267,11 +423,14 @@
             v-for="style in cornerSquareStyles"
             :key="style.value"
             type="button"
-            class="btn-ghost px-3 py-2 text-xs"
+            class="btn-ghost gap-2 px-3 py-2 text-xs"
             :class="{ 'ring-2 ring-accent': options.style.cornerSquareStyle === style.value }"
             @click="updateCornerSquareStyle(style.value)"
           >
-            {{ style.label }}
+            <span class="inline-flex h-5 w-5 shrink-0 items-center justify-center">
+              <span :class="style.iconClass" />
+            </span>
+            <span>{{ t(style.labelKey) }}</span>
           </button>
         </div>
       </div>
@@ -284,11 +443,14 @@
             v-for="style in cornerDotStyles"
             :key="style.value"
             type="button"
-            class="btn-ghost px-3 py-2 text-xs"
+            class="btn-ghost gap-2 px-3 py-2 text-xs"
             :class="{ 'ring-2 ring-accent': options.style.cornerDotStyle === style.value }"
             @click="updateCornerDotStyle(style.value)"
           >
-            {{ style.label }}
+            <span class="inline-flex h-5 w-5 shrink-0 items-center justify-center">
+              <span :class="style.iconClass" />
+            </span>
+            <span>{{ t(style.labelKey) }}</span>
           </button>
         </div>
       </div>
@@ -446,6 +608,7 @@ import type {
   CornerSquareStyle,
   CornerDotStyle,
   GradientType,
+  MarkerCorner,
 } from '../types/qrOptions';
 
 const { t } = useI18n();
@@ -479,21 +642,54 @@ const colorPresets = [
   { name: 'Night', fg: '#7C4DFF', bg: '#1A1A2E' },
 ];
 
-const moduleShapes: Array<{ value: ModuleShape; label: string }> = [
-  { value: 'square', label: 'Square' },
-  { value: 'dot', label: 'Dot' },
-  { value: 'rounded', label: 'Rounded' },
+const moduleShapes: Array<{ value: ModuleShape; labelKey: string; iconClass: string }> = [
+  { value: 'square', labelKey: 'qr.options.shape_square', iconClass: 'h-4 w-4 bg-body' },
+  { value: 'dot', labelKey: 'qr.options.shape_dot', iconClass: 'h-4 w-4 rounded-full bg-body' },
+  {
+    value: 'rounded',
+    labelKey: 'qr.options.shape_rounded',
+    iconClass: 'h-4 w-4 rounded bg-body',
+  },
+  {
+    value: 'diamond',
+    labelKey: 'qr.options.shape_diamond',
+    iconClass: 'h-3 w-3 bg-body rotate-45',
+  },
 ];
 
-const cornerSquareStyles: Array<{ value: CornerSquareStyle; label: string }> = [
-  { value: 'square', label: 'Square' },
-  { value: 'rounded', label: 'Rounded' },
-  { value: 'dot', label: 'Dot' },
+const cornerSquareStyles: Array<{ value: CornerSquareStyle; labelKey: string; iconClass: string }> =
+  [
+    {
+      value: 'square',
+      labelKey: 'qr.options.shape_square',
+      iconClass: 'h-4 w-4 border-2 border-body',
+    },
+    {
+      value: 'rounded',
+      labelKey: 'qr.options.shape_rounded',
+      iconClass: 'h-4 w-4 rounded border-2 border-body',
+    },
+    {
+      value: 'dot',
+      labelKey: 'qr.options.shape_dot',
+      iconClass: 'h-4 w-4 rounded-full border-2 border-body',
+    },
+  ];
+
+const cornerDotStyles: Array<{ value: CornerDotStyle; labelKey: string; iconClass: string }> = [
+  { value: 'square', labelKey: 'qr.options.shape_square', iconClass: 'h-3 w-3 bg-body' },
+  { value: 'dot', labelKey: 'qr.options.shape_dot', iconClass: 'h-3 w-3 rounded-full bg-body' },
+  {
+    value: 'diamond',
+    labelKey: 'qr.options.shape_diamond',
+    iconClass: 'h-3 w-3 bg-body rotate-45',
+  },
 ];
 
-const cornerDotStyles: Array<{ value: CornerDotStyle; label: string }> = [
-  { value: 'square', label: 'Square' },
-  { value: 'dot', label: 'Dot' },
+const markerCorners: Array<{ key: MarkerCorner; labelKey: string }> = [
+  { key: 'topLeft', labelKey: 'qr.options.top_left' },
+  { key: 'topRight', labelKey: 'qr.options.top_right' },
+  { key: 'bottomLeft', labelKey: 'qr.options.bottom_left' },
 ];
 
 function emitUpdate(partial: Partial<QROptions>) {
@@ -581,6 +777,90 @@ function updateGradientType(type: GradientType) {
       foregroundGradient: {
         ...props.options.colors.foregroundGradient,
         type,
+      },
+    },
+  });
+}
+
+function toggleMarkerColors(enabled: boolean) {
+  emitUpdate({
+    colors: {
+      ...props.options.colors,
+      markers: {
+        ...props.options.colors.markers,
+        enabled,
+      },
+    },
+  });
+}
+
+function updateMarkerBorderColor(border: string) {
+  emitUpdate({
+    colors: {
+      ...props.options.colors,
+      markers: {
+        ...props.options.colors.markers,
+        border,
+      },
+    },
+  });
+}
+
+function updateMarkerCenterColor(center: string) {
+  emitUpdate({
+    colors: {
+      ...props.options.colors,
+      markers: {
+        ...props.options.colors.markers,
+        center,
+      },
+    },
+  });
+}
+
+function toggleMarkerPerCorner(perCornerEnabled: boolean) {
+  emitUpdate({
+    colors: {
+      ...props.options.colors,
+      markers: {
+        ...props.options.colors.markers,
+        perCornerEnabled,
+      },
+    },
+  });
+}
+
+function updateMarkerCornerBorder(corner: MarkerCorner, border: string) {
+  emitUpdate({
+    colors: {
+      ...props.options.colors,
+      markers: {
+        ...props.options.colors.markers,
+        corners: {
+          ...props.options.colors.markers.corners,
+          [corner]: {
+            ...props.options.colors.markers.corners[corner],
+            border,
+          },
+        },
+      },
+    },
+  });
+}
+
+function updateMarkerCornerCenter(corner: MarkerCorner, center: string) {
+  emitUpdate({
+    colors: {
+      ...props.options.colors,
+      markers: {
+        ...props.options.colors.markers,
+        corners: {
+          ...props.options.colors.markers.corners,
+          [corner]: {
+            ...props.options.colors.markers.corners[corner],
+            center,
+          },
+        },
       },
     },
   });
