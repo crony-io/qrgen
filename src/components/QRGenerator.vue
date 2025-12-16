@@ -1,7 +1,7 @@
 <template>
-  <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+  <div class="flex flex-col lg:flex-row lg:gap-6">
     <!-- Left Column: Data Input -->
-    <div class="space-y-6">
+    <div class="space-y-6 w-2/3">
       <!-- Type Selector -->
       <QRTypeSelector v-model="selectedType" @select="handleTypeChange" />
 
@@ -37,7 +37,7 @@
     </div>
 
     <!-- Right Column: Preview -->
-    <div class="space-y-6 lg:sticky lg:top-6 lg:self-start">
+    <div class="space-y-6 w-1/3 lg:sticky lg:top-6 lg:self-start">
       <!-- Preview Section -->
       <div class="panel">
         <h3 class="mb-4 text-lg font-semibold text-body">
@@ -77,17 +77,73 @@
             </div>
           </div>
 
-          <!-- Action Buttons -->
-          <div v-if="lastResult?.success" class="flex w-full flex-col gap-3 sm:flex-row">
-            <button @click="downloadQR(lastResult.dataUrl)" class="btn-outline flex-1 px-4 py-2">
-              <Download class="mr-2 inline-block h-4 w-4" aria-hidden="true" />
-              {{ $t('common.download') }}
-            </button>
+          <div v-if="lastResult?.success" class="w-full space-y-3">
+            <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
+              <div class="sm:col-span-2">
+                <label class="form-label text-xs" for="qr-download-filename">{{
+                  t('qr.export.filename')
+                }}</label>
+                <input
+                  id="qr-download-filename"
+                  v-model="downloadFilename"
+                  type="text"
+                  class="form-control-inline w-full"
+                  maxlength="64"
+                />
+              </div>
 
-            <button @click="handleCopy" class="btn-outline flex-1 px-4 py-2">
-              <Copy class="mr-2 inline-block h-4 w-4" aria-hidden="true" />
-              {{ $t('common.copy') }}
-            </button>
+              <div>
+                <label class="form-label text-xs" for="qr-download-format">{{
+                  t('qr.export.format')
+                }}</label>
+                <select
+                  id="qr-download-format"
+                  v-model="downloadFormat"
+                  class="form-control-inline w-full"
+                >
+                  <option value="image/png">PNG</option>
+                  <option value="image/jpeg">JPEG</option>
+                  <option value="image/webp">WebP</option>
+                </select>
+              </div>
+            </div>
+
+            <div v-if="downloadFormat !== 'image/png'" class="w-full">
+              <label class="form-label text-xs" for="qr-download-quality">
+                {{ t('qr.export.quality') }}: {{ Math.round(downloadQuality * 100) }}%
+              </label>
+              <input
+                id="qr-download-quality"
+                v-model.number="downloadQuality"
+                type="range"
+                :min="0.1"
+                :max="1"
+                :step="0.05"
+                class="w-full"
+              />
+            </div>
+
+            <div class="flex w-full flex-col gap-3 sm:flex-row">
+              <button
+                @click="handleDownload"
+                :disabled="isGenerating || isExporting"
+                class="btn-outline flex-1 px-4 py-2 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <span v-if="isExporting" class="flex items-center justify-center">
+                  <LoaderCircle class="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />
+                  {{ $t('common.loading') }}
+                </span>
+                <span v-else>
+                  <Download class="mr-2 inline-block h-4 w-4" aria-hidden="true" />
+                  {{ $t('common.download') }}
+                </span>
+              </button>
+
+              <button @click="handleCopy" class="btn-outline flex-1 px-4 py-2">
+                <Copy class="mr-2 inline-block h-4 w-4" aria-hidden="true" />
+                {{ $t('common.copy') }}
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -101,6 +157,8 @@ import { Copy, Download, LoaderCircle, QrCode } from 'lucide-vue-next';
 import { useI18n } from 'vue-i18n';
 import { useToast } from '../composables/useToast';
 import { useQRGenerator } from '../composables/useQRGenerator';
+import { formatQRData } from '../utils/qrFormatters';
+import { renderQRToDataURL } from '../utils/qrRenderer';
 import { getQRFieldErrors, validateQRData } from '../utils/qrValidation';
 import { debounce } from '../utils/debounce';
 import QRTypeSelector from './QRTypeSelector.vue';
@@ -109,6 +167,8 @@ import QROptionsPanel from './QROptionsPanel.vue';
 import type { QRDataType, AllQRData } from '../types/qr';
 import type { QROptions } from '../types/qrOptions';
 import { createDefaultQROptions } from '../types/qrOptions';
+
+type QRImageType = 'image/png' | 'image/jpeg' | 'image/webp';
 
 const { t } = useI18n();
 const toast = useToast();
@@ -155,6 +215,15 @@ const createInitialData = (type: QRDataType): AllQRData => {
 const qrData = ref<AllQRData>(createInitialData('text'));
 const qrOptions = ref<QROptions>(createDefaultQROptions());
 
+const maxPreviewSize = 512;
+const previewSize = computed(() => Math.min(qrOptions.value.size, maxPreviewSize));
+const previewOptions = computed(() => ({ ...qrOptions.value, size: previewSize.value }));
+
+const isExporting = ref(false);
+const downloadFilename = ref('qrcode');
+const downloadFormat = ref<QRImageType>('image/png');
+const downloadQuality = ref(0.9);
+
 const { isGenerating, lastResult, generateQR, downloadQR, copyToClipboard } = useQRGenerator();
 
 const typeLabel = computed(() => t(`qr.types.${selectedType.value}.label`));
@@ -200,20 +269,77 @@ const handleGenerate = async () => {
 
   await generateQR({
     data: qrData.value,
-    options: qrOptions.value,
+    options: previewOptions.value,
   });
 };
 
 const handleCopy = async () => {
-  if (!lastResult.value?.dataUrl) {
+  showValidation.value = true;
+  if (!isValidData.value) {
+    validationError.value = t('qr.generator.validation_error');
     return;
   }
 
-  const success = await copyToClipboard(lastResult.value.dataUrl);
-  if (success) {
-    toast.success(t('qr.generator.copy_success'));
-  } else {
-    toast.error(t('qr.generator.copy_error'));
+  const formattedText = formatQRData(qrData.value);
+  if (!formattedText.trim()) {
+    validationError.value = t('qr.generator.validation_error');
+    return;
+  }
+
+  validationError.value = '';
+
+  try {
+    const dataUrl = await renderQRToDataURL(formattedText, qrOptions.value, 'image/png');
+    const success = await copyToClipboard(dataUrl);
+
+    if (success) {
+      toast.success(t('qr.generator.copy_success'));
+    } else {
+      toast.error(t('qr.generator.copy_error'));
+    }
+  } catch (error) {
+    if (import.meta.env.DEV) {
+      console.error('Failed to copy QR:', error);
+    }
+    toast.error(t('common.error'));
+  }
+};
+
+function getExportFilename(base: string, type: QRImageType): string {
+  const ext = type === 'image/png' ? 'png' : type === 'image/jpeg' ? 'jpg' : 'webp';
+  const sanitized = (base || 'qrcode').trim() || 'qrcode';
+  const withoutExt = sanitized.replace(/\.[^.]+$/, '');
+  return `${withoutExt}.${ext}`;
+}
+
+const handleDownload = async () => {
+  showValidation.value = true;
+  if (!isValidData.value) {
+    validationError.value = t('qr.generator.validation_error');
+    return;
+  }
+
+  const formattedText = formatQRData(qrData.value);
+  if (!formattedText.trim()) {
+    validationError.value = t('qr.generator.validation_error');
+    return;
+  }
+
+  validationError.value = '';
+  isExporting.value = true;
+
+  try {
+    const type = downloadFormat.value;
+    const quality = type === 'image/png' ? undefined : downloadQuality.value;
+    const dataUrl = await renderQRToDataURL(formattedText, qrOptions.value, type, quality);
+    downloadQR(dataUrl, getExportFilename(downloadFilename.value, type));
+  } catch (error) {
+    if (import.meta.env.DEV) {
+      console.error('Failed to export QR:', error);
+    }
+    toast.error(t('common.error'));
+  } finally {
+    isExporting.value = false;
   }
 };
 
@@ -223,7 +349,7 @@ const debouncedGenerate = debounce(async () => {
   }
   await generateQR({
     data: qrData.value,
-    options: qrOptions.value,
+    options: previewOptions.value,
   });
 }, 400);
 

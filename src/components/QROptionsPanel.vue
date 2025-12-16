@@ -8,9 +8,31 @@
 
       <!-- Size -->
       <div>
-        <label class="form-label" for="qr-size">{{ t('qr.options.size') }}</label>
+        <div class="flex items-center justify-between gap-3 mb-3">
+          <label class="form-label" for="qr-size">{{ t('qr.options.size') }}</label>
+          <div class="flex items-center gap-2">
+            <button
+              type="button"
+              class="btn-ghost px-3 py-1 text-xs"
+              :class="{ 'ring-2 ring-accent': !isCustomSizeMode }"
+              @click="setSizeMode('preset')"
+            >
+              {{ t('qr.options.size_mode_slider') }}
+            </button>
+            <button
+              type="button"
+              class="btn-ghost px-3 py-1 text-xs"
+              :class="{ 'ring-2 ring-accent': isCustomSizeMode }"
+              @click="setSizeMode('custom')"
+            >
+              {{ t('qr.options.size_mode_custom') }}
+            </button>
+          </div>
+        </div>
+
         <div class="flex items-center gap-3">
           <input
+            v-if="!isCustomSizeMode"
             id="qr-size"
             type="range"
             :min="128"
@@ -20,9 +42,24 @@
             class="flex-1"
             @input="updateSize(($event.target as HTMLInputElement).valueAsNumber)"
           />
+          <input
+            v-else
+            id="qr-size"
+            type="number"
+            :min="128"
+            :max="10000"
+            :step="1"
+            :value="customSizeDraft"
+            class="form-control-inline flex-1"
+            @focus="isEditingCustomSize = true"
+            @input="customSizeDraft = ($event.target as HTMLInputElement).value"
+            @keydown.enter.prevent="commitCustomSize()"
+            @blur="commitCustomSize()"
+          />
           <span class="w-16 text-sm text-muted">{{ options.size }}px</span>
         </div>
-        <div class="mt-2 flex flex-wrap gap-2">
+
+        <div v-if="!isCustomSizeMode" class="mt-2 flex flex-wrap gap-2">
           <button
             v-for="preset in sizePresets"
             :key="preset"
@@ -34,6 +71,9 @@
             {{ preset }}px
           </button>
         </div>
+        <p v-else class="mt-2 text-xs text-muted">
+          {{ t('qr.options.size_custom_help') }}
+        </p>
       </div>
 
       <!-- Margin -->
@@ -129,6 +169,27 @@
         </div>
       </div>
 
+      <div class="flex items-center gap-2">
+        <input
+          id="qr-transparent-bg"
+          type="checkbox"
+          :checked="options.colors.transparentBackground"
+          class="form-checkbox"
+          @change="toggleTransparentBackground(($event.target as HTMLInputElement).checked)"
+        />
+        <label for="qr-transparent-bg" class="form-checkbox-label">
+          {{ t('qr.options.transparent_background') }}
+        </label>
+      </div>
+
+      <p v-if="options.colors.transparentBackground" class="text-xs text-muted">
+        {{ t('qr.options.transparent_background_note') }}
+      </p>
+
+      <p v-if="showContrastWarning" class="text-xs text-error">
+        {{ t('qr.options.contrast_warning', { ratio: contrastRatioLabel }) }}
+      </p>
+
       <!-- Color Presets -->
       <div>
         <span class="form-label">{{ t('qr.options.color_presets') }}</span>
@@ -163,7 +224,7 @@
           @change="toggleForegroundGradient(($event.target as HTMLInputElement).checked)"
         />
         <label for="qr-fg-gradient" class="form-checkbox-label">
-          {{ t('qr.options.use_gradient') }}
+          {{ t('qr.options.foreground_gradient') }}
         </label>
       </div>
 
@@ -174,11 +235,11 @@
       >
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="form-label text-xs" for="gradient-start">{{
+            <label class="form-label text-xs" for="fg-gradient-start">{{
               t('qr.options.gradient_start')
             }}</label>
             <input
-              id="gradient-start"
+              id="fg-gradient-start"
               type="color"
               :value="options.colors.foregroundGradient.stops[0]?.color || '#000000'"
               class="h-8 w-full cursor-pointer rounded border border-border"
@@ -186,11 +247,11 @@
             />
           </div>
           <div>
-            <label class="form-label text-xs" for="gradient-end">{{
+            <label class="form-label text-xs" for="fg-gradient-end">{{
               t('qr.options.gradient_end')
             }}</label>
             <input
-              id="gradient-end"
+              id="fg-gradient-end"
               type="color"
               :value="options.colors.foregroundGradient.stops[1]?.color || '#000000'"
               class="h-8 w-full cursor-pointer rounded border border-border"
@@ -200,11 +261,11 @@
         </div>
 
         <div>
-          <label class="form-label text-xs" for="gradient-angle">
+          <label class="form-label text-xs" for="fg-gradient-angle">
             {{ t('qr.options.gradient_angle') }}: {{ options.colors.foregroundGradient.angle }}°
           </label>
           <input
-            id="gradient-angle"
+            id="fg-gradient-angle"
             type="range"
             :min="0"
             :max="360"
@@ -235,6 +296,88 @@
         </div>
       </div>
 
+      <div class="flex items-center gap-2">
+        <input
+          id="qr-bg-gradient"
+          type="checkbox"
+          :checked="options.colors.backgroundGradient.enabled"
+          class="form-checkbox"
+          @change="toggleBackgroundGradient(($event.target as HTMLInputElement).checked)"
+        />
+        <label for="qr-bg-gradient" class="form-checkbox-label">
+          {{ t('qr.options.background_gradient') }}
+        </label>
+      </div>
+
+      <div
+        v-if="options.colors.backgroundGradient.enabled"
+        class="space-y-3 rounded-lg border border-border p-3"
+      >
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="form-label text-xs" for="bg-gradient-start">{{
+              t('qr.options.gradient_start')
+            }}</label>
+            <input
+              id="bg-gradient-start"
+              type="color"
+              :value="options.colors.backgroundGradient.stops[0]?.color || '#000000'"
+              class="h-8 w-full cursor-pointer rounded border border-border"
+              @input="updateBackgroundGradientStop(0, ($event.target as HTMLInputElement).value)"
+            />
+          </div>
+          <div>
+            <label class="form-label text-xs" for="bg-gradient-end">{{
+              t('qr.options.gradient_end')
+            }}</label>
+            <input
+              id="bg-gradient-end"
+              type="color"
+              :value="options.colors.backgroundGradient.stops[1]?.color || '#000000'"
+              class="h-8 w-full cursor-pointer rounded border border-border"
+              @input="updateBackgroundGradientStop(1, ($event.target as HTMLInputElement).value)"
+            />
+          </div>
+        </div>
+
+        <div>
+          <label class="form-label text-xs" for="bg-gradient-angle">
+            {{ t('qr.options.gradient_angle') }}: {{ options.colors.backgroundGradient.angle }}°
+          </label>
+          <input
+            id="bg-gradient-angle"
+            type="range"
+            :min="0"
+            :max="360"
+            :step="15"
+            :value="options.colors.backgroundGradient.angle"
+            class="w-full"
+            @input="
+              updateBackgroundGradientAngle(($event.target as HTMLInputElement).valueAsNumber)
+            "
+          />
+        </div>
+
+        <div class="flex gap-2">
+          <button
+            type="button"
+            class="btn-ghost px-2 py-1 text-xs"
+            :class="{ 'ring-2 ring-accent': options.colors.backgroundGradient.type === 'linear' }"
+            @click="updateBackgroundGradientType('linear')"
+          >
+            {{ t('qr.options.gradient_linear') }}
+          </button>
+          <button
+            type="button"
+            class="btn-ghost px-2 py-1 text-xs"
+            :class="{ 'ring-2 ring-accent': options.colors.backgroundGradient.type === 'radial' }"
+            @click="updateBackgroundGradientType('radial')"
+          >
+            {{ t('qr.options.gradient_radial') }}
+          </button>
+        </div>
+      </div>
+
       <div class="space-y-3 rounded-lg border border-border p-3">
         <div class="flex items-center justify-between">
           <span class="text-sm font-medium text-body">{{ t('qr.options.marker_colors') }}</span>
@@ -253,7 +396,10 @@
         </div>
 
         <div v-if="options.colors.markers.enabled" class="space-y-3">
-          <div class="grid grid-cols-2 gap-4">
+          <div
+            class="grid grid-cols-2 gap-4"
+            v-if="options.colors.markers.perCornerEnabled == false"
+          >
             <div>
               <label class="form-label text-xs" for="marker-border-color">{{
                 t('qr.options.marker_border_color')
@@ -598,7 +744,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { Upload } from 'lucide-vue-next';
 import type {
@@ -625,6 +771,55 @@ const logoInputRef = ref<HTMLInputElement | null>(null);
 const isDragging = ref(false);
 
 const sizePresets = [128, 256, 384, 512];
+
+const minPresetSize = sizePresets[0] ?? 128;
+const maxPresetSize = sizePresets[sizePresets.length - 1] ?? 512;
+
+const maxCustomSize = 10000;
+
+const customSizeDraft = ref(String(props.options.size));
+const isEditingCustomSize = ref(false);
+
+watch(
+  () => props.options.size,
+  (newSize) => {
+    if (!isEditingCustomSize.value) {
+      customSizeDraft.value = String(newSize);
+    }
+  },
+);
+
+const sizeMode = ref<'preset' | 'custom'>(props.options.size > maxPresetSize ? 'custom' : 'preset');
+
+const isCustomSizeMode = computed(() => {
+  return sizeMode.value === 'custom' || props.options.size > maxPresetSize;
+});
+
+function setSizeMode(mode: 'preset' | 'custom') {
+  sizeMode.value = mode;
+
+  isEditingCustomSize.value = false;
+  customSizeDraft.value = String(props.options.size);
+
+  if (mode === 'preset') {
+    if (props.options.size > maxPresetSize) {
+      updateSize(maxPresetSize);
+    }
+  }
+}
+
+function commitCustomSize() {
+  isEditingCustomSize.value = false;
+
+  const parsed = Number(customSizeDraft.value);
+  if (!Number.isFinite(parsed)) {
+    customSizeDraft.value = String(props.options.size);
+    return;
+  }
+
+  const normalized = updateSize(parsed);
+  customSizeDraft.value = String(normalized);
+}
 
 const eccLevels: Array<{ value: ErrorCorrectionLevel; label: string }> = [
   { value: 'L', label: '7%' },
@@ -692,12 +887,100 @@ const markerCorners: Array<{ key: MarkerCorner; labelKey: string }> = [
   { key: 'bottomLeft', labelKey: 'qr.options.bottom_left' },
 ];
 
+function parseHexColor(value: string): { r: number; g: number; b: number } | null {
+  const raw = value.trim();
+  if (!raw.startsWith('#')) {
+    return null;
+  }
+  const hex = raw.slice(1);
+  const expanded =
+    hex.length === 3
+      ? `${hex[0]}${hex[0]}${hex[1]}${hex[1]}${hex[2]}${hex[2]}`
+      : hex.length === 6
+        ? hex
+        : null;
+
+  if (!expanded || !/^[0-9a-fA-F]{6}$/.test(expanded)) {
+    return null;
+  }
+
+  return {
+    r: parseInt(expanded.slice(0, 2), 16),
+    g: parseInt(expanded.slice(2, 4), 16),
+    b: parseInt(expanded.slice(4, 6), 16),
+  };
+}
+
+function relativeLuminance(rgb: { r: number; g: number; b: number }): number {
+  const toLinear = (channel: number) => {
+    const c = channel / 255;
+    return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+  };
+
+  const r = toLinear(rgb.r);
+  const g = toLinear(rgb.g);
+  const b = toLinear(rgb.b);
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+}
+
+function contrastRatio(fg: string, bg: string): number | null {
+  const fgRgb = parseHexColor(fg);
+  const bgRgb = parseHexColor(bg);
+  if (!fgRgb || !bgRgb) {
+    return null;
+  }
+
+  const l1 = relativeLuminance(fgRgb);
+  const l2 = relativeLuminance(bgRgb);
+  const lighter = Math.max(l1, l2);
+  const darker = Math.min(l1, l2);
+  return (lighter + 0.05) / (darker + 0.05);
+}
+
+const minContrastRatio = computed<number | null>(() => {
+  const fgColors = props.options.colors.foregroundGradient.enabled
+    ? props.options.colors.foregroundGradient.stops.map((stop) => stop.color)
+    : [props.options.colors.foreground];
+  const bgColors = props.options.colors.backgroundGradient.enabled
+    ? props.options.colors.backgroundGradient.stops.map((stop) => stop.color)
+    : [props.options.colors.background];
+
+  let min = Number.POSITIVE_INFINITY;
+
+  for (const fg of fgColors) {
+    for (const bg of bgColors) {
+      const ratio = contrastRatio(fg, bg);
+      if (ratio === null) {
+        return null;
+      }
+      min = Math.min(min, ratio);
+    }
+  }
+
+  return Number.isFinite(min) ? min : null;
+});
+
+const showContrastWarning = computed(
+  () =>
+    !props.options.colors.transparentBackground &&
+    minContrastRatio.value !== null &&
+    minContrastRatio.value < 3,
+);
+
+const contrastRatioLabel = computed(() =>
+  minContrastRatio.value === null ? '' : minContrastRatio.value.toFixed(2),
+);
+
 function emitUpdate(partial: Partial<QROptions>) {
   emit('update:options', { ...props.options, ...partial });
 }
 
-function updateSize(size: number) {
-  emitUpdate({ size });
+function updateSize(size: number): number {
+  const normalized = Number.isFinite(size)
+    ? Math.min(maxCustomSize, Math.max(minPresetSize, Math.round(size)))
+    : props.options.size;
+  emitUpdate({ size: normalized });
+  return normalized;
 }
 
 function updateMargin(margin: number) {
@@ -776,6 +1059,67 @@ function updateGradientType(type: GradientType) {
       ...props.options.colors,
       foregroundGradient: {
         ...props.options.colors.foregroundGradient,
+        type,
+      },
+    },
+  });
+}
+
+function toggleTransparentBackground(transparentBackground: boolean) {
+  emitUpdate({
+    colors: {
+      ...props.options.colors,
+      transparentBackground,
+    },
+  });
+}
+
+function toggleBackgroundGradient(enabled: boolean) {
+  emitUpdate({
+    colors: {
+      ...props.options.colors,
+      backgroundGradient: {
+        ...props.options.colors.backgroundGradient,
+        enabled,
+      },
+    },
+  });
+}
+
+function updateBackgroundGradientStop(index: number, color: string) {
+  const stops = [...props.options.colors.backgroundGradient.stops];
+  if (stops[index]) {
+    stops[index] = { ...stops[index], color };
+  }
+  emitUpdate({
+    colors: {
+      ...props.options.colors,
+      backgroundGradient: {
+        ...props.options.colors.backgroundGradient,
+        stops,
+      },
+    },
+  });
+}
+
+function updateBackgroundGradientAngle(angle: number) {
+  emitUpdate({
+    colors: {
+      ...props.options.colors,
+      backgroundGradient: {
+        ...props.options.colors.backgroundGradient,
+        angle,
+      },
+    },
+  });
+}
+
+function updateBackgroundGradientType(type: GradientType) {
+  emitUpdate({
+    colors: {
+      ...props.options.colors,
+      backgroundGradient: {
+        ...props.options.colors.backgroundGradient,
         type,
       },
     },

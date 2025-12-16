@@ -46,7 +46,7 @@
       "event": { "label": "Evento", "description": "Evento de calendario" }
     },
     "generator": {
-      "enter_info": "Ingresa información de {type}",
+      "enter_info": "Ingresa Información de {type}",
       "generated_title": "Código QR Generado",
       "preview_title": "Vista Previa",
       "preview_placeholder": "Ingresa datos y haz clic en Generar",
@@ -59,18 +59,31 @@
         "failed_generate": "No se pudo generar el código QR"
       }
     },
+    "export": {
+      "filename": "Nombre de archivo",
+      "format": "Formato",
+      "quality": "Calidad"
+    },
     "options": {
       "title": "Opciones de Personalización",
       "size_quality": "Tamaño y Calidad",
       "size": "Tamaño",
-      "margin": "Margen (Zona Silenciosa)",
+      "size_mode_slider": "Deslizador",
+      "size_mode_custom": "Personalizado",
+      "size_custom_help": "El tamaño personalizado se usa para descargar/copiar. La vista previa está limitada.",
+      "margin": "Margen",
       "error_correction": "Corrección de Errores",
       "ecc_logo_warning": "El logo requiere corrección de errores Alta (H) para mejor confiabilidad de escaneo",
       "colors": "Colores",
       "foreground": "Primer Plano",
       "background": "Fondo",
+      "transparent_background": "Fondo transparente",
+      "transparent_background_note": "Nota: las exportaciones JPEG no pueden ser transparentes",
+      "contrast_warning": "El bajo contraste puede reducir la confiabilidad del escaneo (ratio mínimo: {ratio}:1)",
       "color_presets": "Preestablecidos",
       "use_gradient": "Usar degradado",
+      "foreground_gradient": "Degradado del primer plano",
+      "background_gradient": "Degradado del fondo",
       "gradient_start": "Color Inicial",
       "gradient_end": "Color Final",
       "gradient_angle": "Ángulo",

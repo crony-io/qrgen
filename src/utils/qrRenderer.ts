@@ -185,13 +185,15 @@ function drawCornerSquare(
     }
     case 'square':
     default: {
-      ctx.fillRect(x, y, outerSize, outerSize);
-      ctx.clearRect(
+      ctx.beginPath();
+      ctx.rect(x, y, outerSize, outerSize);
+      ctx.rect(
         x + moduleSize,
         y + moduleSize,
         outerSize - 2 * moduleSize,
         outerSize - 2 * moduleSize,
       );
+      ctx.fill('evenodd');
       break;
     }
   }
@@ -283,8 +285,16 @@ export async function renderQRToCanvas(
   });
 
   const moduleCount = qrData.modules.size;
-  const moduleSize = Math.floor((options.size - options.margin * 2) / moduleCount);
-  const canvasSize = moduleCount * moduleSize + options.margin * 2;
+  const canvasSize = Math.max(1, Math.round(options.size));
+  const margin = Math.max(0, Math.round(options.margin));
+  const availableSize = Math.max(0, canvasSize - margin * 2);
+
+  const flooredModuleSize = Math.floor(availableSize / moduleCount);
+  const moduleSize = flooredModuleSize >= 1 ? flooredModuleSize : availableSize / moduleCount;
+
+  const qrPixelSize = moduleCount * moduleSize;
+  const extraPadding = canvasSize - (qrPixelSize + margin * 2);
+  const offset = margin + (extraPadding > 0 ? Math.floor(extraPadding / 2) : 0);
 
   const canvas = document.createElement('canvas');
   canvas.width = canvasSize;
@@ -295,15 +305,17 @@ export async function renderQRToCanvas(
     throw new Error('Could not get canvas context');
   }
 
-  const bgFill = getFillStyle(
-    ctx,
-    options.colors.background,
-    options.colors.backgroundGradient,
-    canvasSize,
-    canvasSize,
-  );
-  ctx.fillStyle = bgFill;
-  ctx.fillRect(0, 0, canvasSize, canvasSize);
+  if (!options.colors.transparentBackground) {
+    const bgFill = getFillStyle(
+      ctx,
+      options.colors.background,
+      options.colors.backgroundGradient,
+      canvasSize,
+      canvasSize,
+    );
+    ctx.fillStyle = bgFill;
+    ctx.fillRect(0, 0, canvasSize, canvasSize);
+  }
 
   const fgFill = getFillStyle(
     ctx,
@@ -317,8 +329,8 @@ export async function renderQRToCanvas(
   const finderPositions = getFinderPatternPositions(moduleCount);
 
   for (const [fx, fy] of finderPositions) {
-    const pixelX = fx * moduleSize + options.margin;
-    const pixelY = fy * moduleSize + options.margin;
+    const pixelX = fx * moduleSize + offset;
+    const pixelY = fy * moduleSize + offset;
 
     const cornerKey = fx === 0 && fy === 0 ? 'topLeft' : fy === 0 ? 'topRight' : 'bottomLeft';
     const markers = options.colors.markers;
@@ -352,8 +364,8 @@ export async function renderQRToCanvas(
         continue;
       }
 
-      const x = col * moduleSize + options.margin;
-      const y = row * moduleSize + options.margin;
+      const x = col * moduleSize + offset;
+      const y = row * moduleSize + offset;
 
       ctx.fillStyle = fgFill;
       drawModule(ctx, x, y, moduleSize, options.style.moduleShape);
@@ -380,6 +392,17 @@ export async function renderQRToDataURL(
   type: 'image/png' | 'image/jpeg' | 'image/webp' = 'image/png',
   quality?: number,
 ): Promise<string> {
-  const canvas = await renderQRToCanvas(text, options);
+  const effectiveOptions =
+    type === 'image/jpeg' && options.colors.transparentBackground
+      ? {
+          ...options,
+          colors: {
+            ...options.colors,
+            transparentBackground: false,
+          },
+        }
+      : options;
+
+  const canvas = await renderQRToCanvas(text, effectiveOptions);
   return canvas.toDataURL(type, quality);
 }

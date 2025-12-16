@@ -3,10 +3,8 @@
     <AppHeader />
     <ToastContainer />
 
-    <main class="container mx-auto px-4 py-8">
-      <div class="max-w-4xl mx-auto">
-        <slot />
-      </div>
+    <main class="mx-auto px-4 py-8">
+      <slot />
     </main>
   </div>
 </template>

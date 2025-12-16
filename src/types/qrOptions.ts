@@ -46,6 +46,7 @@ export interface MarkerColorOptions {
 export interface QRColorOptions {
   foreground: string;
   background: string;
+  transparentBackground: boolean;
   foregroundGradient: GradientOptions;
   backgroundGradient: GradientOptions;
   markers: MarkerColorOptions;
@@ -100,6 +101,7 @@ export const DEFAULT_MARKER_COLORS: MarkerColorOptions = {
 export const DEFAULT_COLORS: QRColorOptions = {
   foreground: '#000000',
   background: '#FFFFFF',
+  transparentBackground: false,
   foregroundGradient: { ...DEFAULT_GRADIENT },
   backgroundGradient: { ...DEFAULT_GRADIENT },
   markers: { ...DEFAULT_MARKER_COLORS },
@@ -122,6 +124,7 @@ export function createDefaultQROptions(): QROptions {
     colors: {
       foreground: DEFAULT_COLORS.foreground,
       background: DEFAULT_COLORS.background,
+      transparentBackground: DEFAULT_COLORS.transparentBackground,
       foregroundGradient: { ...DEFAULT_GRADIENT, stops: [...DEFAULT_GRADIENT.stops] },
       backgroundGradient: { ...DEFAULT_GRADIENT, stops: [...DEFAULT_GRADIENT.stops] },
       markers: {

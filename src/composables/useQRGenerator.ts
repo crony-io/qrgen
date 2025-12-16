@@ -42,6 +42,9 @@ export function useQRGenerator() {
         colors: {
           ...defaults.colors,
           ...genOptions.options?.colors,
+          transparentBackground:
+            genOptions.options?.colors?.transparentBackground ??
+            defaults.colors.transparentBackground,
           markers: {
             ...defaults.colors.markers,
             ...genOptions.options?.colors?.markers,

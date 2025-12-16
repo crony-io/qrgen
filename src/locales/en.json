@@ -59,18 +59,31 @@
         "failed_generate": "Failed to generate QR code"
       }
     },
+    "export": {
+      "filename": "Filename",
+      "format": "Format",
+      "quality": "Quality"
+    },
     "options": {
       "title": "Customization Options",
       "size_quality": "Size & Quality",
       "size": "Size",
-      "margin": "Margin (Quiet Zone)",
+      "size_mode_slider": "Slider",
+      "size_mode_custom": "Custom",
+      "size_custom_help": "Custom size is used for download/copy. Preview is capped.",
+      "margin": "Margin",
       "error_correction": "Error Correction",
       "ecc_logo_warning": "Logo requires High (H) error correction for best scan reliability",
       "colors": "Colors",
       "foreground": "Foreground",
       "background": "Background",
+      "transparent_background": "Transparent background",
+      "transparent_background_note": "Note: JPEG exports cannot be transparent",
+      "contrast_warning": "Low contrast may reduce scan reliability (min ratio: {ratio}:1)",
       "color_presets": "Presets",
       "use_gradient": "Use gradient",
+      "foreground_gradient": "Foreground gradient",
+      "background_gradient": "Background gradient",
       "gradient_start": "Start Color",
       "gradient_end": "End Color",
       "gradient_angle": "Angle",
