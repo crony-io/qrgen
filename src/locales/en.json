@@ -1,0 +1,178 @@
+{
+  "app": {
+    "title": "QR Code Generator",
+    "description": "Generate QR codes for various types of data"
+  },
+  "common": {
+    "generate": "Generate",
+    "download": "Download",
+    "copy": "Copy",
+    "save": "Save",
+    "cancel": "Cancel",
+    "close": "Close",
+    "loading": "Loading...",
+    "success": "Success!",
+    "error": "Error",
+    "warning": "Warning"
+  },
+  "theme": {
+    "selector": {
+      "aria_label": "Change theme to {theme}"
+    },
+    "options": {
+      "light": "Light",
+      "dark": "Dark",
+      "system": "System"
+    }
+  },
+  "language": {
+    "selector": {
+      "aria_label": "Change language to {language}"
+    }
+  },
+  "qr": {
+    "type_selector": {
+      "label": "QR Code Type"
+    },
+    "types": {
+      "text": { "label": "Text", "description": "Plain text" },
+      "url": { "label": "URL", "description": "Website link" },
+      "email": { "label": "Email", "description": "Email address" },
+      "phone": { "label": "Phone", "description": "Phone number" },
+      "sms": { "label": "SMS", "description": "Text message" },
+      "wifi": { "label": "WiFi", "description": "WiFi network" },
+      "vcard": { "label": "vCard", "description": "Contact card" },
+      "geo": { "label": "Location", "description": "GPS location" },
+      "event": { "label": "Event", "description": "Calendar event" }
+    },
+    "generator": {
+      "enter_info": "Enter {type} Information",
+      "generated_title": "Generated QR Code",
+      "preview_title": "Preview",
+      "preview_placeholder": "Enter data and click Generate",
+      "validation_error": "Please fill in all required fields correctly",
+      "qr_image_alt": "Generated QR Code",
+      "copy_success": "QR code copied to clipboard",
+      "copy_error": "Failed to copy QR code",
+      "errors": {
+        "data_required": "Data is required to generate QR code",
+        "failed_generate": "Failed to generate QR code"
+      }
+    },
+    "options": {
+      "title": "Customization Options",
+      "size_quality": "Size & Quality",
+      "size": "Size",
+      "margin": "Margin (Quiet Zone)",
+      "error_correction": "Error Correction",
+      "ecc_logo_warning": "Logo requires High (H) error correction for best scan reliability",
+      "colors": "Colors",
+      "foreground": "Foreground",
+      "background": "Background",
+      "color_presets": "Presets",
+      "use_gradient": "Use gradient",
+      "gradient_start": "Start Color",
+      "gradient_end": "End Color",
+      "gradient_angle": "Angle",
+      "gradient_linear": "Linear",
+      "gradient_radial": "Radial",
+      "style": "Style",
+      "module_shape": "Module Shape",
+      "corner_square": "Corner Square",
+      "corner_dot": "Corner Dot",
+      "logo": "Logo",
+      "enable_logo": "Enable",
+      "upload_logo": "Click or drag to upload logo",
+      "remove_logo": "Remove",
+      "logo_size": "Logo Size",
+      "logo_padding": "Logo Padding",
+      "logo_shape": "Logo Shape",
+      "logo_background": "Logo Background",
+      "shape_square": "Square",
+      "shape_circle": "Circle"
+    },
+    "validation": {
+      "required": "This field is required",
+      "invalid": "Invalid value",
+      "invalid_email": "Please enter a valid email address"
+    },
+    "forms": {
+      "text": {
+        "label": "Text Content",
+        "placeholder": "Enter text to generate QR code..."
+      },
+      "url": {
+        "label": "Website URL",
+        "protocol_https": "https://",
+        "protocol_http": "http://",
+        "placeholder": "example.com"
+      },
+      "email": {
+        "address_label": "Email Address",
+        "address_placeholder": "email{'@'}example.com",
+        "subject_label": "Subject (optional)",
+        "subject_placeholder": "Email subject",
+        "message_label": "Message (optional)",
+        "message_placeholder": "Email message"
+      },
+      "phone": {
+        "label": "Phone Number",
+        "placeholder": "555-0123"
+      },
+      "sms": {
+        "phone_label": "Phone Number",
+        "phone_placeholder": "555-0123",
+        "message_label": "Message (optional)",
+        "message_placeholder": "SMS message"
+      },
+      "wifi": {
+        "ssid_label": "Network Name (SSID)",
+        "ssid_placeholder": "MyWiFiNetwork",
+        "encryption_label": "Security Type",
+        "encryption_wpa": "WPA/WPA2",
+        "encryption_wep": "WEP",
+        "encryption_nopass": "No Password",
+        "password_label": "Password",
+        "password_placeholder": "WiFi password",
+        "hidden_label": "Hidden network"
+      },
+      "vcard": {
+        "first_name_label": "First Name",
+        "first_name_placeholder": "John",
+        "last_name_label": "Last Name",
+        "last_name_placeholder": "Doe",
+        "phone_label": "Phone (optional)",
+        "phone_placeholder": "+1-555-0123",
+        "email_label": "Email (optional)",
+        "email_placeholder": "email{'@'}example.com",
+        "company_label": "Company (optional)",
+        "company_placeholder": "Acme Corp",
+        "address_label": "Address (optional)",
+        "address_placeholder": "123 Main St, City, State",
+        "website_label": "Website (optional)",
+        "website_placeholder": "https://example.com"
+      },
+      "geo": {
+        "latitude_label": "Latitude",
+        "latitude_placeholder": "37.7749",
+        "longitude_label": "Longitude",
+        "longitude_placeholder": "-122.4194"
+      },
+      "event": {
+        "title_label": "Event Title",
+        "title_placeholder": "Meeting, Birthday, etc.",
+        "start_label": "Start Date & Time",
+        "end_label": "End Date & Time (optional)",
+        "location_label": "Location (optional)",
+        "location_placeholder": "Conference Room A",
+        "description_label": "Description (optional)",
+        "description_placeholder": "Event details"
+      }
+    }
+  },
+  "navigation": {
+    "home": "Home",
+    "history": "History",
+    "settings": "Settings"
+  }
+}

@@ -1,0 +1,178 @@
+{
+  "app": {
+    "title": "Generador de Códigos QR",
+    "description": "Genera códigos QR para varios tipos de datos"
+  },
+  "common": {
+    "generate": "Generar",
+    "download": "Descargar",
+    "copy": "Copiar",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "close": "Cerrar",
+    "loading": "Cargando...",
+    "success": "¡Éxito!",
+    "error": "Error",
+    "warning": "Advertencia"
+  },
+  "theme": {
+    "selector": {
+      "aria_label": "Cambiar tema a {theme}"
+    },
+    "options": {
+      "light": "Claro",
+      "dark": "Oscuro",
+      "system": "Sistema"
+    }
+  },
+  "language": {
+    "selector": {
+      "aria_label": "Cambiar idioma a {language}"
+    }
+  },
+  "qr": {
+    "type_selector": {
+      "label": "Tipo de Código QR"
+    },
+    "types": {
+      "text": { "label": "Texto", "description": "Texto simple" },
+      "url": { "label": "URL", "description": "Enlace web" },
+      "email": { "label": "Correo", "description": "Dirección de correo electrónico" },
+      "phone": { "label": "Teléfono", "description": "Número de teléfono" },
+      "sms": { "label": "SMS", "description": "Mensaje de texto" },
+      "wifi": { "label": "WiFi", "description": "Red WiFi" },
+      "vcard": { "label": "vCard", "description": "Tarjeta de contacto" },
+      "geo": { "label": "Ubicación", "description": "Ubicación GPS" },
+      "event": { "label": "Evento", "description": "Evento de calendario" }
+    },
+    "generator": {
+      "enter_info": "Ingresa información de {type}",
+      "generated_title": "Código QR Generado",
+      "preview_title": "Vista Previa",
+      "preview_placeholder": "Ingresa datos y haz clic en Generar",
+      "validation_error": "Por favor completa todos los campos requeridos correctamente",
+      "qr_image_alt": "Código QR Generado",
+      "copy_success": "Código QR copiado al portapapeles",
+      "copy_error": "Error al copiar el código QR",
+      "errors": {
+        "data_required": "Los datos son obligatorios para generar el código QR",
+        "failed_generate": "No se pudo generar el código QR"
+      }
+    },
+    "options": {
+      "title": "Opciones de Personalización",
+      "size_quality": "Tamaño y Calidad",
+      "size": "Tamaño",
+      "margin": "Margen (Zona Silenciosa)",
+      "error_correction": "Corrección de Errores",
+      "ecc_logo_warning": "El logo requiere corrección de errores Alta (H) para mejor confiabilidad de escaneo",
+      "colors": "Colores",
+      "foreground": "Primer Plano",
+      "background": "Fondo",
+      "color_presets": "Preestablecidos",
+      "use_gradient": "Usar degradado",
+      "gradient_start": "Color Inicial",
+      "gradient_end": "Color Final",
+      "gradient_angle": "Ángulo",
+      "gradient_linear": "Lineal",
+      "gradient_radial": "Radial",
+      "style": "Estilo",
+      "module_shape": "Forma del Módulo",
+      "corner_square": "Cuadrado de Esquina",
+      "corner_dot": "Punto de Esquina",
+      "logo": "Logo",
+      "enable_logo": "Habilitar",
+      "upload_logo": "Haz clic o arrastra para subir logo",
+      "remove_logo": "Eliminar",
+      "logo_size": "Tamaño del Logo",
+      "logo_padding": "Relleno del Logo",
+      "logo_shape": "Forma del Logo",
+      "logo_background": "Fondo del Logo",
+      "shape_square": "Cuadrado",
+      "shape_circle": "Círculo"
+    },
+    "validation": {
+      "required": "Este campo es obligatorio",
+      "invalid": "Valor inválido",
+      "invalid_email": "Por favor ingresa una dirección de correo válida"
+    },
+    "forms": {
+      "text": {
+        "label": "Contenido de Texto",
+        "placeholder": "Ingresa texto para generar código QR..."
+      },
+      "url": {
+        "label": "URL del Sitio Web",
+        "protocol_https": "https://",
+        "protocol_http": "http://",
+        "placeholder": "ejemplo.com"
+      },
+      "email": {
+        "address_label": "Dirección de Correo",
+        "address_placeholder": "correo{'@'}ejemplo.com",
+        "subject_label": "Asunto (opcional)",
+        "subject_placeholder": "Asunto del correo",
+        "message_label": "Mensaje (opcional)",
+        "message_placeholder": "Mensaje del correo"
+      },
+      "phone": {
+        "label": "Número de Teléfono",
+        "placeholder": "555-0123"
+      },
+      "sms": {
+        "phone_label": "Número de Teléfono",
+        "phone_placeholder": "555-0123",
+        "message_label": "Mensaje (opcional)",
+        "message_placeholder": "Mensaje SMS"
+      },
+      "wifi": {
+        "ssid_label": "Nombre de Red (SSID)",
+        "ssid_placeholder": "MiRedWiFi",
+        "encryption_label": "Tipo de Seguridad",
+        "encryption_wpa": "WPA/WPA2",
+        "encryption_wep": "WEP",
+        "encryption_nopass": "Sin Contraseña",
+        "password_label": "Contraseña",
+        "password_placeholder": "Contraseña WiFi",
+        "hidden_label": "Red oculta"
+      },
+      "vcard": {
+        "first_name_label": "Nombre",
+        "first_name_placeholder": "Juan",
+        "last_name_label": "Apellido",
+        "last_name_placeholder": "Pérez",
+        "phone_label": "Teléfono (opcional)",
+        "phone_placeholder": "+1-555-0123",
+        "email_label": "Correo (opcional)",
+        "email_placeholder": "correo{'@'}ejemplo.com",
+        "company_label": "Empresa (opcional)",
+        "company_placeholder": "Acme Corp",
+        "address_label": "Dirección (opcional)",
+        "address_placeholder": "Calle Principal 123, Ciudad, Estado",
+        "website_label": "Sitio Web (opcional)",
+        "website_placeholder": "https://ejemplo.com"
+      },
+      "geo": {
+        "latitude_label": "Latitud",
+        "latitude_placeholder": "37.7749",
+        "longitude_label": "Longitud",
+        "longitude_placeholder": "-122.4194"
+      },
+      "event": {
+        "title_label": "Título del Evento",
+        "title_placeholder": "Reunión, Cumpleaños, etc.",
+        "start_label": "Fecha y Hora de Inicio",
+        "end_label": "Fecha y Hora de Fin (opcional)",
+        "location_label": "Ubicación (opcional)",
+        "location_placeholder": "Sala de Conferencias A",
+        "description_label": "Descripción (opcional)",
+        "description_placeholder": "Detalles del evento"
+      }
+    }
+  },
+  "navigation": {
+    "home": "Inicio",
+    "history": "Historial",
+    "settings": "Configuración"
+  }
+}
