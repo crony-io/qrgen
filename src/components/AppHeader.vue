@@ -5,7 +5,7 @@ import AppLogo from './ui/AppLogo.vue';
 </script>
 <template>
   <header class="border-b border-border">
-    <div class="container mx-auto px-4 py-4">
+    <div class="mx-auto p-4">
       <div class="flex items-center justify-between">
         <!-- Logo/Title -->
         <div class="flex items-center space-x-3">

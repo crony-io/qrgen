@@ -1,6 +1,6 @@
 <template>
   <footer class="border-t border-stone-200 dark:border-stone-700">
-    <div class="max-w-6xl mx-auto px-6 py-4">
+    <div class="mx-auto p-4">
       <div class="flex items-center justify-end">
         <a
           href="https://github.com/crony-io/"
