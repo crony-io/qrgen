@@ -66,6 +66,7 @@
   ::file-selector-button {
     border-color: var(--color-gray-200, currentColor);
   }
+  
   body {
     background-color: var(--body-bg);
     color: var(--body-color);
@@ -81,6 +82,7 @@
         transparent 60%
       );
   }
+
   button:not(:disabled),
   [role='button']:not(:disabled) {
     cursor: pointer;
@@ -97,6 +99,7 @@
     font-weight: 600;
     font-style: normal;
   }
+
   h2 {
     font-optical-sizing: auto;
     font-weight: 500;
@@ -148,79 +151,67 @@
       scrollbar-color: #d7d7d7 #0f0f0f;
     }
   }
+
+  .form-label {
+    @apply mb-2 block text-sm font-medium text-body;
+  }
+
+  .form-control-inline {
+    @apply rounded-xl border border-border bg-surface px-3 py-2 text-body placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-accent;
+  }
+
+  .form-control-textarea {
+    @apply form-control py-3;
+  }
+
+  .form-checkbox {
+    @apply h-4 w-4 rounded border-border bg-surface text-accent focus:ring-accent;
+  }
+
+  .form-checkbox-label {
+    @apply text-sm text-muted;
+  }
+
+  .btn-primary {
+    @apply btn bg-primary text-page hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-accent;
+  }
+
+  .btn-ghost {
+    @apply btn glass glass-hover;
+  }
+
+  .btn-outline {
+    @apply btn border border-border bg-transparent text-body hover:bg-surface focus:outline-none focus:ring-2 focus:ring-accent;
+  }
+
+  .icon-btn {
+    @apply inline-flex h-10 w-10 items-center justify-center rounded-xl border border-border bg-surface text-body transition hover:bg-surface-hover focus:outline-none focus:ring-2 focus:ring-accent;
+  }
+
+  .panel {
+    @apply glass-card p-6;
+  }
+
+  .panel-title {
+    @apply mb-4 text-lg font-semibold text-body;
+  }
+
+  .divider {
+    @apply my-4 h-px w-full bg-border;
+  }
 }
 @utility glass {
   @apply border border-border bg-surface backdrop-blur-xl;
 }
-
 @utility form-control {
   @apply w-full rounded-xl border border-border bg-surface px-4 py-2 text-body placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-accent;
 }
 @utility btn {
   @apply inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-medium transition;
 }
-
 @utility glass-hover {
   @apply hover:bg-surface-hover;
 }
-
 @utility glass-card {
   @apply glass rounded-2xl shadow-xl;
-}
-
-@utility form-label {
-  @apply mb-2 block text-sm font-medium text-body;
-}
-
-@utility form-control-inline {
-  @apply rounded-xl border border-border bg-surface px-3 py-2 text-body placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-accent;
-}
-
-@utility form-control-textarea {
-  @apply form-control py-3;
-}
-
-@utility form-checkbox {
-  @apply h-4 w-4 rounded border-border bg-surface text-accent focus:ring-accent;
-}
-
-@utility form-checkbox-label {
-  @apply text-sm text-muted;
-}
-
-@utility btn-primary {
-  @apply btn bg-primary text-page hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-accent;
-}
-
-@utility btn-ghost {
-  @apply btn glass glass-hover;
-}
-
-@utility btn-outline {
-  @apply btn border border-border bg-transparent text-body hover:bg-surface focus:outline-none focus:ring-2 focus:ring-accent;
-}
-
-@utility icon-btn {
-  @apply inline-flex h-10 w-10 items-center justify-center rounded-xl border border-border bg-surface text-body transition hover:bg-surface-hover focus:outline-none focus:ring-2 focus:ring-accent;
-}
-
-@utility panel {
-  @apply glass-card p-6;
-}
-
-@utility panel-title {
-  @apply mb-4 text-lg font-semibold text-body;
-}
-
-@utility divider {
-  @apply my-4 h-px w-full bg-border;
-}
-
-@utility dropdown-surface {
-  @apply glass rounded-xl shadow-xl;
-}
-
-@utility link {
-  @apply underline-offset-4 hover:underline;
-  color: var(--app-accent);
 }
