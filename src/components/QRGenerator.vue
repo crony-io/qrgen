@@ -104,11 +104,15 @@
                   <option value="image/png">PNG</option>
                   <option value="image/jpeg">JPEG</option>
                   <option value="image/webp">WebP</option>
+                  <option value="image/svg+xml">SVG</option>
                 </select>
               </div>
             </div>
 
-            <div v-if="downloadFormat !== 'image/png'" class="w-full">
+            <div
+              v-if="downloadFormat === 'image/jpeg' || downloadFormat === 'image/webp'"
+              class="w-full"
+            >
               <label class="form-label text-xs" for="qr-download-quality">
                 {{ t('qr.export.quality') }}: {{ Math.round(downloadQuality * 100) }}%
               </label>
@@ -178,7 +182,7 @@ import type { QRDataType, AllQRData } from '../types/qr';
 import type { QROptions } from '../types/qrOptions';
 import { createDefaultQROptions } from '../types/qrOptions';
 
-type QRImageType = 'image/png' | 'image/jpeg' | 'image/webp';
+type QRImageType = 'image/png' | 'image/jpeg' | 'image/webp' | 'image/svg+xml';
 
 const { t } = useI18n();
 const toast = useToast();
@@ -325,7 +329,14 @@ const handleCopy = async () => {
 };
 
 function getExportFilename(base: string, type: QRImageType): string {
-  const ext = type === 'image/png' ? 'png' : type === 'image/jpeg' ? 'jpg' : 'webp';
+  const ext =
+    type === 'image/png'
+      ? 'png'
+      : type === 'image/jpeg'
+        ? 'jpg'
+        : type === 'image/webp'
+          ? 'webp'
+          : 'svg';
   const sanitized = (base || 'qrcode').trim() || 'qrcode';
   const withoutExt = sanitized.replace(/\.[^.]+$/, '');
   return `${withoutExt}.${ext}`;
@@ -349,7 +360,7 @@ const handleDownload = async () => {
 
   try {
     const type = downloadFormat.value;
-    const quality = type === 'image/png' ? undefined : downloadQuality.value;
+    const quality = type === 'image/png' || type === 'image/svg+xml' ? undefined : downloadQuality.value;
     const dataUrl = await renderQRToDataURL(formattedText, qrOptions.value, type, quality);
     downloadQR(dataUrl, getExportFilename(downloadFilename.value, type));
   } catch (error) {
