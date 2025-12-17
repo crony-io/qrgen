@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { QrCode } from 'lucide-vue-next';
 import LanguageSelector from './LanguageSelector.vue';
 import ThemeSelector from './ThemeSelector.vue';
+import AppLogo from './ui/AppLogo.vue';
 </script>
 <template>
   <header class="border-b border-border">
@@ -9,9 +9,7 @@ import ThemeSelector from './ThemeSelector.vue';
       <div class="flex items-center justify-between">
         <!-- Logo/Title -->
         <div class="flex items-center space-x-3">
-          <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-            <QrCode class="h-5 w-5 text-page" aria-hidden="true" />
-          </div>
+          <AppLogo class="h-8 w-8 text-accent" aria-hidden="true" />
           <h1 class="text-xl font-semibold text-body">
             {{ $t('app.title') }}
           </h1>

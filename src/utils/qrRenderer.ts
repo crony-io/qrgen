@@ -328,7 +328,12 @@ function svgDiamondPath(x: number, y: number, size: number): string {
   )} L ${formatSvgNumber(x)} ${formatSvgNumber(y + half)} Z`;
 }
 
-function svgGradientDef(id: string, gradient: GradientOptions, width: number, height: number): string {
+function svgGradientDef(
+  id: string,
+  gradient: GradientOptions,
+  width: number,
+  height: number,
+): string {
   const stops = gradient.stops
     .map((stop) => {
       const offset = `${Math.max(0, Math.min(1, stop.offset)) * 100}%`;
@@ -373,7 +378,13 @@ function getSvgFillStyle(
   return color;
 }
 
-function drawModuleSvg(x: number, y: number, size: number, shape: ModuleShape, fill: string): string {
+function drawModuleSvg(
+  x: number,
+  y: number,
+  size: number,
+  shape: ModuleShape,
+  fill: string,
+): string {
   switch (shape) {
     case 'dot': {
       const r = size / 2;
@@ -552,7 +563,13 @@ export async function renderQRToSVGString(text: string, options: QROptions): Pro
           : fgFill;
 
     nodes.push(
-      drawCornerSquareSvg(pixelX, pixelY, moduleSize, options.style.cornerSquareStyle, markerBorderColor),
+      drawCornerSquareSvg(
+        pixelX,
+        pixelY,
+        moduleSize,
+        options.style.cornerSquareStyle,
+        markerBorderColor,
+      ),
     );
     nodes.push(
       drawCornerDotSvg(pixelX, pixelY, moduleSize, options.style.cornerDotStyle, markerCenterColor),
@@ -626,12 +643,14 @@ export async function renderQRToSVGString(text: string, options: QROptions): Pro
 
   const defsBlock = defs.length ? `<defs>${defs.join('')}</defs>` : '';
 
-  return `<?xml version="1.0" encoding="UTF-8"?>` +
+  return (
+    `<?xml version="1.0" encoding="UTF-8"?>` +
     `<svg xmlns="http://www.w3.org/2000/svg" width="${formatSvgNumber(
       canvasSize,
     )}" height="${formatSvgNumber(canvasSize)}" viewBox="0 0 ${formatSvgNumber(
       canvasSize,
-    )} ${formatSvgNumber(canvasSize)}">${defsBlock}${nodes.join('')}</svg>`;
+    )} ${formatSvgNumber(canvasSize)}">${defsBlock}${nodes.join('')}</svg>`
+  );
 }
 
 export async function renderQRToCanvas(

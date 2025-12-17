@@ -360,7 +360,8 @@ const handleDownload = async () => {
 
   try {
     const type = downloadFormat.value;
-    const quality = type === 'image/png' || type === 'image/svg+xml' ? undefined : downloadQuality.value;
+    const quality =
+      type === 'image/png' || type === 'image/svg+xml' ? undefined : downloadQuality.value;
     const dataUrl = await renderQRToDataURL(formattedText, qrOptions.value, type, quality);
     downloadQR(dataUrl, getExportFilename(downloadFilename.value, type));
   } catch (error) {
