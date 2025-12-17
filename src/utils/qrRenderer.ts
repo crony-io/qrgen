@@ -406,3 +406,43 @@ export async function renderQRToDataURL(
   const canvas = await renderQRToCanvas(text, effectiveOptions);
   return canvas.toDataURL(type, quality);
 }
+
+export async function renderQRToBlob(
+  text: string,
+  options: QROptions,
+  type: 'image/png' | 'image/jpeg' | 'image/webp' = 'image/png',
+  quality?: number,
+): Promise<Blob> {
+  const effectiveOptions =
+    type === 'image/jpeg' && options.colors.transparentBackground
+      ? {
+          ...options,
+          colors: {
+            ...options.colors,
+            transparentBackground: false,
+          },
+        }
+      : options;
+
+  const canvas = await renderQRToCanvas(text, effectiveOptions);
+
+  if (!canvas.toBlob) {
+    const dataUrl = canvas.toDataURL(type, quality);
+    const response = await fetch(dataUrl);
+    return await response.blob();
+  }
+
+  return await new Promise<Blob>((resolve, reject) => {
+    canvas.toBlob(
+      (blob) => {
+        if (blob) {
+          resolve(blob);
+        } else {
+          reject(new Error('Failed to create blob'));
+        }
+      },
+      type,
+      quality,
+    );
+  });
+}

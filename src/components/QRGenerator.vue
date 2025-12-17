@@ -139,9 +139,19 @@
                 </span>
               </button>
 
-              <button @click="handleCopy" class="btn-outline flex-1 px-4 py-2">
-                <Copy class="mr-2 inline-block h-4 w-4" aria-hidden="true" />
-                {{ $t('common.copy') }}
+              <button
+                @click="handleCopy"
+                :disabled="isGenerating || isCopying"
+                class="btn-outline flex-1 px-4 py-2 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <span v-if="isCopying" class="flex items-center justify-center">
+                  <LoaderCircle class="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />
+                  {{ $t('common.loading') }}
+                </span>
+                <span v-else>
+                  <Copy class="mr-2 inline-block h-4 w-4" aria-hidden="true" />
+                  {{ $t('common.copy') }}
+                </span>
               </button>
             </div>
           </div>
@@ -158,7 +168,7 @@ import { useI18n } from 'vue-i18n';
 import { useToast } from '../composables/useToast';
 import { useQRGenerator } from '../composables/useQRGenerator';
 import { formatQRData } from '../utils/qrFormatters';
-import { renderQRToDataURL } from '../utils/qrRenderer';
+import { renderQRToDataURL, renderQRToBlob } from '../utils/qrRenderer';
 import { getQRFieldErrors, validateQRData } from '../utils/qrValidation';
 import { debounce } from '../utils/debounce';
 import QRTypeSelector from './QRTypeSelector.vue';
@@ -220,6 +230,7 @@ const previewSize = computed(() => Math.min(qrOptions.value.size, maxPreviewSize
 const previewOptions = computed(() => ({ ...qrOptions.value, size: previewSize.value }));
 
 const isExporting = ref(false);
+const isCopying = ref(false);
 const downloadFilename = ref('qrcode');
 const downloadFormat = ref<QRImageType>('image/png');
 const downloadQuality = ref(0.9);
@@ -288,9 +299,15 @@ const handleCopy = async () => {
 
   validationError.value = '';
 
+  if (isCopying.value) {
+    return;
+  }
+
+  isCopying.value = true;
+
   try {
-    const dataUrl = await renderQRToDataURL(formattedText, qrOptions.value, 'image/png');
-    const success = await copyToClipboard(dataUrl);
+    const blob = await renderQRToBlob(formattedText, qrOptions.value, 'image/png');
+    const success = await copyToClipboard(blob);
 
     if (success) {
       toast.success(t('qr.generator.copy_success'));
@@ -302,6 +319,8 @@ const handleCopy = async () => {
       console.error('Failed to copy QR:', error);
     }
     toast.error(t('common.error'));
+  } finally {
+    isCopying.value = false;
   }
 };
 

@@ -115,13 +115,25 @@ export function useQRGenerator() {
     link.click();
   };
 
-  const copyToClipboard = async (dataUrl: string): Promise<boolean> => {
+  const copyToClipboard = async (input: string | Blob): Promise<boolean> => {
     try {
-      // Convert data URL to blob
-      const response = await fetch(dataUrl);
-      const blob = await response.blob();
+      if (!navigator.clipboard || typeof navigator.clipboard.write !== 'function') {
+        return false;
+      }
+      if (typeof ClipboardItem === 'undefined') {
+        return false;
+      }
 
-      await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+      const blob =
+        typeof input === 'string'
+          ? await (async () => {
+              const response = await fetch(input);
+              return await response.blob();
+            })()
+          : input;
+
+      const mimeType = blob.type || 'image/png';
+      await navigator.clipboard.write([new ClipboardItem({ [mimeType]: blob })]);
 
       return true;
     } catch (error) {

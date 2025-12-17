@@ -1,7 +1,9 @@
 <template>
+  <Teleport to="body">
+    <ToastContainer />
+  </Teleport>
   <div class="min-h-screen text-body backdrop-blur-3xl relative z-10">
     <AppHeader />
-    <ToastContainer />
 
     <main class="mx-auto px-4 py-8">
       <slot />
